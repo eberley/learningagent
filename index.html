@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secret Agent Learning Academy</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #001219;
+            color: #00ff00;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .terminal {
+            background-color: #000;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .btn {
+            background-color: #00ff00;
+            color: #000;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .game-area {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="terminal">
+            <h1>🕵️ SECRET AGENT LEARNING ACADEMY 🕵️</h1>
+            <p>WELCOME AGENT. YOUR MISSION, SHOULD YOU CHOOSE TO ACCEPT IT...</p>
+            <p>Learn while completing secret missions against the clock or other agents!</p>
+            
+            <h2>AVAILABLE MISSIONS:</h2>
+            <button class="btn" onclick="startGame()">CODE BREAKER CHALLENGE</button>
+        </div>
+
+        <div id="gameArea" class="game-area terminal">
+            <h3>CODE BREAKER MISSION</h3>
+            <p>Decrypt the following message using the cipher key: A=1, B=2, etc.</p>
+            <p id="encryptedMessage"></p>
+            <input type="text" id="answer" placeholder="Enter decoded message">
+            <button class="btn" onclick="checkAnswer()">SUBMIT</button>
+            <p id="timer">Time: 30s</p>
+            <p id="result"></p>
+        </div>
+    </div>
+
+    <script>
+        let timeLeft = 30;
+        let timer;
+        const messages = [
+            "HELLO AGENT",
+            "TOP SECRET",
+            "MISSION START"
+        ];
+
+        function startGame() {
+            document.getElementById('gameArea').style.display = 'block';
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            const encrypted = encryptMessage(randomMessage);
+            document.getElementById('encryptedMessage').textContent = encrypted;
+            startTimer();
+        }
+
+        function encryptMessage(message) {
+            return message.split('').map(char => {
+                if (char === ' ') return ' ';
+                return ((char.charCodeAt(0) - 64) % 26 || 26).toString();
+            }).join(' ');
+        }
+
+        function checkAnswer() {
+            const answer = document.getElementById('answer').value.toUpperCase();
+            const encrypted = document.getElementById('encryptedMessage').textContent;
+            const original = messages.find(msg => 
+                encryptMessage(msg) === encrypted
+            );
+
+            if (answer === original) {
+                document.getElementById('result').textContent = "Mission Accomplished! 🌟";
+                clearInterval(timer);
+            } else {
+                document.getElementById('result').textContent = "Try again, Agent!";
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 30;
+            clearInterval(timer);
+            timer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').textContent = `Time: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    document.getElementById('result').textContent = "Mission Failed - Time's up!";
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
